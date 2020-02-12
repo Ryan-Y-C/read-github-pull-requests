@@ -44,18 +44,10 @@ public class Crawler {
             Document document = Jsoup.parse(html);
             ArrayList<Element> elements = document.select(".js-issue-row");
             for (Element e : elements) {
-                try {
-                    pr.add(
-                            new GitHubPullRequest(Integer.parseInt(e.child(0).child(1).child(0).attr("href").substring(20)),
-                                    e.child(0).child(1).child(0).text(),
-                                    e.child(0).child(1).child(2).child(0).child(1).text())
-                    );
-                } catch (RuntimeException e1) {
-                    pr.add(
-                            new GitHubPullRequest(Integer.parseInt(e.child(0).child(1).child(0).attr("href").substring(20)),
-                                    e.child(0).child(1).child(0).text(),
-                                    e.child(0).child(1).child(3).child(0).child(1).text()));
-                }
+                int number = Integer.parseInt(e.child(0).child(1).child(0).attr("href").substring(20));
+                String title = e.select("[data-hovercard-type=pull_request]").text();
+                String author = e.select("[data-hovercard-type=user]").text();
+                pr.add(new GitHubPullRequest(number, title, author));
             }
         } finally {
             response1.close();
